@@ -1,27 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wicaa_store/views/homepage.dart';
 import 'package:wicaa_store/views/landingpage.dart';
 import 'package:wicaa_store/views/signin.dart';
 import 'package:wicaa_store/views/signup.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  runApp(MyApp(prefs: prefs));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+  final SharedPreferences prefs;
+
+  const MyApp({Key? key, required this.prefs}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
     return MaterialApp(
       title: 'Wicca',
       theme: ThemeData(
         textTheme: GoogleFonts.soraTextTheme(),
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange),
       ),
-      initialRoute: "/landingpage", // Set the initial route to the login page
+      home: isLoggedIn ? HomePage() : LandingPage(),
       routes: {
         "/home": (context) => HomePage(),
         "/signup": (context) => SignUpPage(),

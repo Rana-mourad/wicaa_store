@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:wicaa_store/views/homepage.dart';
+import 'package:wicaa_store/views/signin.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primaryColor: Colors.yellow,
+        primaryColor: Colors.orange,
         hintColor: Colors.yellowAccent,
         scaffoldBackgroundColor: Colors.white,
       ),
@@ -20,7 +25,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
+  @override
+  _SignUpPageState createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  bool _isChecked = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,27 +45,59 @@ class SignUpPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Full Name'),
+              SizedBox(height: 20.0),
+              Text(
+                'Create an Account',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
+              SizedBox(height: 20.0),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Email Address'),
+                decoration: InputDecoration(
+                  labelText: 'Full Name',
+                  icon: Icon(Icons.person),
+                ),
               ),
+              SizedBox(height: 10.0),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: InputDecoration(
+                  labelText: 'Email Address',
+                  icon: Icon(Icons.email),
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              SizedBox(height: 10.0),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  icon: Icon(Icons.lock),
+                ),
                 obscureText: true,
               ),
+              SizedBox(height: 10.0),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Phone Number'),
+                decoration: InputDecoration(
+                  labelText: 'Phone Number',
+                  icon: Icon(Icons.phone),
+                ),
+                keyboardType: TextInputType.phone,
               ),
+              SizedBox(height: 10.0),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Address'),
+                decoration: InputDecoration(
+                  labelText: 'Address',
+                  icon: Icon(Icons.location_on),
+                ),
               ),
+              SizedBox(height: 20.0),
               Row(
                 children: [
                   Checkbox(
-                    value: false,
-                    onChanged: (value) {},
+                    value: _isChecked,
+                    onChanged: (value) {
+                      setState(() {
+                        _isChecked = value ?? false;
+                      });
+                    },
                   ),
                   Text('Receive promotional offers and updates'),
                 ],
@@ -61,7 +105,6 @@ class SignUpPage extends StatelessWidget {
               SizedBox(height: 20.0),
               ElevatedButton(
                 onPressed: () {
-                  // Navigate to the home page on sign-up button press
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -72,10 +115,9 @@ class SignUpPage extends StatelessWidget {
               SizedBox(height: 10.0),
               TextButton(
                 onPressed: () {
-                  // Navigate to the login page
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
+                    MaterialPageRoute(builder: (context) => SignInPage()),
                   );
                 },
                 child: Text('Already have an account? Login Here'),
@@ -83,20 +125,6 @@ class SignUpPage extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class LoginPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-      ),
-      body: Center(
-        child: Text('Welcome to Login Page'),
       ),
     );
   }
