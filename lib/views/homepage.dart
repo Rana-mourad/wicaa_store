@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => CartProvider(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Wiccaa',
+      title: 'Wicca',
       theme: ThemeData(
-        primarySwatch: Colors.yellow,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primarySwatch: Colors.orange,
       ),
       home: HomePage(),
     );
@@ -27,26 +28,31 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () {
-              // Handle shopping cart action
-            },
-          ),
-        ],
+        title: Text('wicca'),
       ),
-      body: SingleChildScrollView(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SearchBar(),
-            SectionTitle(title: 'Categories'),
-            CategoriesGrid(),
-            SectionTitle(title: 'Best Sellers'),
-            BestSellersGrid(),
-            BottomNavigationBar(),
+            ProductCard(
+              title: 'childern suit',
+              description: 'nice suit for girle childern.',
+              price: 19.99,
+              imageProvider: AssetImage('images/1.png'),
+            ),
+            ProductCard(
+              title: 'GenZ shirt',
+              description: 'awesome t-shirt for local brand.',
+              price: 29.99,
+              imageProvider: AssetImage('images/2.png'),
+            ),
+            ProductCard(
+              title: 'red chose',
+              description: 'Famous brand.',
+              price: 39.99,
+              imageProvider: AssetImage('images/6.png'),
+            ),
           ],
         ),
       ),
@@ -54,142 +60,58 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class SearchBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(8.0),
-      child: TextFormField(
-        decoration: InputDecoration(
-          labelText: 'Search...',
-          prefixIcon: Icon(Icons.search),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class SectionTitle extends StatelessWidget {
+class ProductCard extends StatelessWidget {
   final String title;
+  final String description;
+  final double price;
+  final ImageProvider<Object> imageProvider;
 
-  const SectionTitle({required this.title});
+  ProductCard({
+    required this.title,
+    required this.description,
+    required this.price,
+    required this.imageProvider,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 20.0,
-          fontWeight: FontWeight.bold,
+    return Card(
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image(
+              image: imageProvider,
+              height: 100,
+              width: 100,
+            ),
+            SizedBox(height: 8),
+            Text(description),
+            SizedBox(height: 8),
+            Text('Price: \$$price'),
+            SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () {
+                context.read<CartProvider>().addToCart(title, price);
+              },
+              child: Text('Add to Cart'),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class CategoriesGrid extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8.0,
-        mainAxisSpacing: 8.0,
-      ),
-      itemCount: categoryImages.length,
-      itemBuilder: (context, index) {
-        return Image.asset(
-          categoryImages[index],
-          fit: BoxFit.cover,
-        );
-      },
-    );
+class CartProvider with ChangeNotifier {
+  List<String> _cartItems = [];
+
+  List<String> get cartItems => _cartItems;
+
+  void addToCart(String itemName, double itemPrice) {
+    _cartItems.add('$itemName - \$$itemPrice');
+    notifyListeners();
   }
 }
-
-class BestSellersGrid extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8.0,
-        mainAxisSpacing: 8.0,
-      ),
-      itemCount: bestSellerImages.length,
-      itemBuilder: (context, index) {
-        return Image.network(
-          bestSellerImages[index],
-          fit: BoxFit.cover,
-        );
-      },
-    );
-  }
-}
-
-class BottomNavigationBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 20.0),
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(width: 1.0, color: Colors.grey),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          IconButton(
-            icon: Icon(Icons.home_outlined),
-            onPressed: () {
-              // Handle home action
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.favorite),
-            onPressed: () {
-              // Handle favorites action
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.sell),
-            onPressed: () {
-              // Handle selling action
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {
-              // Handle notifications action
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.account_box),
-            onPressed: () {
-              // Handle user account action
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-List<String> categoryImages = [
-  'assets/images/1.jpg',
-  'assets/images/2.jpg',
-  'assets/images/3.jpg',
-  'assets/images/4.jpg',
-  // Add more category image paths as needed
-];
-
-List<String> bestSellerImages = [
-  'assets/images/3.jpg',
-  'assets/images/4.jpg',
-];
